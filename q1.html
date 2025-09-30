@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pastel Cake Order</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f0f4f8, #e3eaf2);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      text-align: center;
+      color: #7b9acc;
+      margin-bottom: 25px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 12px;
+      display: block;
+      color: #4a4a4a;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border: 1px solid #cdd9e5;
+      border-radius: 8px;
+      background-color: #e3eaf2;
+    }
+
+    fieldset {
+      margin-top: 18px;
+      border: 1px solid #cdd9e5;
+      padding: 12px;
+      border-radius: 10px;
+      background-color: #f6f9fc;
+    }
+
+    .topping {
+      margin-right: 10px;
+    }
+
+    button {
+      background-color: #7b9acc;
+      color: white;
+      padding: 14px;
+      border: none;
+      width: 100%;
+      font-size: 16px;
+      border-radius: 10px;
+      margin-top: 25px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #5f7fae;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #3b4c6b;
+      text-align: center;
+    }
+
+    .cake-preview {
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    .cake-preview img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🍰 Pastel Cake Order</h1>
+    <form id="cakeForm">
+      <label for="cakeType">Cake Type:</label>
+      <select id="cakeType">
+        <option value="chocolate">Chocolate</option>
+        <option value="vanilla">Vanilla</option>
+        <option value="redvelvet">Red Velvet</option>
+      </select>
+
+      <label for="cakeSize">Size:</label>
+      <select id="cakeSize">
+        <option value="small">Small</option>
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+      </select>
+
+      <label for="quantity">Quantity:</label>
+      <input type="number" id="quantity" min="1" value="1">
+
+      <fieldset>
+        <legend>Extra Toppings:</legend>
+        <label><input type="checkbox" value="nuts" class="topping"> Nuts (+₹50)</label>
+        <label><input type="checkbox" value="chocoChips" class="topping"> Choco Chips (+₹40)</label>
+        <label><input type="checkbox" value="berries" class="topping"> Berries (+₹60)</label>
+      </fieldset>
+
+      <button type="button" id="calculateBtn">Calculate Total</button>
+    </form>
+
+    <div id="result"></div>
+
+    <div class="cake-preview">
+      <img id="cakeImage" src="https://images.unsplash.com/photo-1601979031925-6f8f7b6b1f5e?auto=format&fit=crop&w=600&q=80" alt="Cake Preview">
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      const cakePrices = {
+        chocolate: { small: 200, medium: 350, large: 500 },
+        vanilla: { small: 180, medium: 320, large: 450 },
+        redvelvet: { small: 250, medium: 400, large: 600 }
+      };
+
+      const toppingPrices = {
+        nuts: 50,
+        chocoChips: 40,
+        berries: 60
+      };
+
+      const cakeImages = {
+        chocolate: "https://images.unsplash.com/photo-1601979031925-6f8f7b6b1f5e?auto=format&fit=crop&w=600&q=80",
+        vanilla: "https://images.unsplash.com/photo-1604152135912-04a579b5c4b6?auto=format&fit=crop&w=600&q=80",
+        redvelvet: "https://images.unsplash.com/photo-1612197527276-3f3c6f8c0f5a?auto=format&fit=crop&w=600&q=80"
+      };
+
+      function updateImage(type) {
+        $('#cakeImage').fadeOut(200, function () {
+          $(this).attr('src', cakeImages[type]).fadeIn(300);
+        });
+      }
+
+      $('#cakeType').change(function () {
+        updateImage($(this).val());
+      });
+
+      $('#calculateBtn').click(function () {
+        const type = $('#cakeType').val();
+        const size = $('#cakeSize').val();
+        const quantity = parseInt($('#quantity').val());
+
+        if (quantity < 1 || isNaN(quantity)) {
+          $('#result').html("Please enter a valid quantity.");
+          return;
+        }
+
+        let basePrice = cakePrices[type][size];
+        let toppingsTotal = 0;
+
+        $('.topping:checked').each(function () {
+          toppingsTotal += toppingPrices[$(this).val()];
+        });
+
+        const total = (basePrice + toppingsTotal) * quantity;
+
+        $('#result').hide().html(`🎉 Total Price: ₹${total}`).fadeIn(400);
+      });
+
+      updateImage($('#cakeType').val());
+    });
+  </script>
+</body>
+</html>
